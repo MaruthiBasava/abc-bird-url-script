@@ -8,10 +8,7 @@ class Linker:
     '''
     def __init__(self): #wb is the excel workbook name
         self.wb= openpyxl.load_workbook('links.xlsx')
-        #print(self.fileName)
         self.sheet = self.wb.get_sheet_by_name('Sheet1')
-        #print('------"%s" has been selected------' % (self.sheet.title))
-        #print(self.sheet['A1045'].value)
         self.rowNum = 1;
 
     def sheetTitle(self):
@@ -26,7 +23,7 @@ class Linker:
         return note;
 
     def save(self):
-        self.wb.save('links-updated.xlsx')
+        self.wb.save('linksupdated.xlsx')
 
     def length(self):
         self.startRow = self.rowNum;
