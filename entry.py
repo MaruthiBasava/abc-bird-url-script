@@ -1,20 +1,33 @@
 from bs4 import BeautifulSoup
 import requests
+from linker import Linker
 
-base_url = "https://web.archive.org/web/"
-date = "20161017050155/"
-website = "https://www.google.com/"
+link = Linker()
 
-def format_url(base_url,date,website):
-    return base_url + date + website
+
+def format_url():
+    base_url = "https://web.archive.org/web/"
+    date = "20001017050155/"
+    return base_url + date + link.getNextLink()
+
 
 def get_answers(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
-    results = soup.find_all('a')
-    return [answer.text for answer in results]
+    result = soup.find('span', class_='H1')
+
+    if result == None:
+        result = soup.find('h1', {"align":"center"})
+        if result == None:
+            return "[FAILED]"
+
+    return result.text
 
 
-a = format_url(base_url=base_url, date=date, website=website)
+def add_all_titles(length):
+    for _ in range(length):
+        get_answers(format_url())
 
-print(get_answers(a))
+
+add_all_titles(20)
+
