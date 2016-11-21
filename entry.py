@@ -4,7 +4,6 @@ from linker import Linker
 import re
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
-from unidecode import unidecode
 
 
 link = Linker()
@@ -67,7 +66,7 @@ def add_all_links1(a,b): #will add the link or note to the sheet
     link.save()
 
 try:
-    add_all_links(link.length())
+    add_all_links1(987,link.length())
 except:
     link.save()
     print("FAILED")
