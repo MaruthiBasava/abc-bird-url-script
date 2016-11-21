@@ -15,7 +15,7 @@ def format_url():
     return base_url + date + link.getNextLink()
 
 
-def get_parsed_title(url):
+def get_parsed_title(url): #gets title and parses it
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     result = soup.find('span', class_='H1')
@@ -23,25 +23,31 @@ def get_parsed_title(url):
     if result == None:
         result = soup.find('h1', {"align":"center"})
         if result == None:
-            return "no-search-results"
+            return "no-wayback"
 
     a = result.text
     b = _removeNonAscii(a)
     c = re.sub('\s+', ' ', b).strip()
     d = c.replace(" ", "-")
-    return d
+    return d.replace(" ", "")
 
 def _removeNonAscii(s):
     return "".join(i for i in s if ( ord(i) == 32 or ord(i) >= 65 and ord(i) <= 90 or ord(i) >= 97 and ord(i) <= 122))
 
-def return_working_title(url): #simply returns the title
+def return_working_title(url):
     hdr = {'User-agent': 'Mozilla/5.0'}
     req = Request(url, headers=hdr)
 
     try:
-        page = urlopen(req).read()
+        page = urlopen(req).read
+        ppage = requests.get(url)
+
+        soup = BeautifulSoup(ppage.text, 'html.parser')
+
+        if "404 " in soup.text:
+            return "not in new site"
     except HTTPError:
-        return "404 NOT FOUND"
+        return "NOT ON NEW SITE"
 
     return url
 
@@ -49,9 +55,13 @@ def add_all_links(length): #will add the link or note to the sheet
     for i in range(length):
         a = get_parsed_title(format_url())
         current_link = return_working_title("https://abcbirds.org/" + a)
-        print(str(i) + " " + current_link + "  \n  " + "https://abcbirds.org/" + a)
+        print(str(i) + " " + a + "  \n  " + "https://abcbirds.org/" + a)
 
-        link.addNote(current_link)
+        if a == 'no-wayback' or a is 'no-wayback':
+            link.addNote("no-wayback-machine")
+            print('WAYBACK')
+        else:
+            link.addNote(current_link)
 
     link.save()
 
@@ -60,9 +70,13 @@ def add_all_links1(a,b): #will add the link or note to the sheet
     for i in range(a,b):
         a = get_parsed_title(format_url())
         current_link = return_working_title("https://abcbirds.org/" + a)
-        print(str(i) + " " + current_link + "  \n  " + "https://abcbirds.org/" + a)
+        print(str(i) + " " + a + "  \n  " + "https://abcbirds.org/" + a)
 
-        link.addNote(current_link)
+        if a == 'no-wayback' or a is 'no-wayback':
+            link.addNote("no-wayback-machine")
+            print('WAYBACK')
+        else:
+            link.addNote(current_link)
 
     link.save()
 
