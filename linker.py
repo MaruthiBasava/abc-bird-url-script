@@ -7,7 +7,7 @@ class Linker:
     and to add notes to it like the new link or the status
     '''
     def __init__(self): #wb is the excel workbook name
-        self.wb= openpyxl.load_workbook('format.xlsx')
+        self.wb = openpyxl.load_workbook('links.xlsx')
         self.sheet = self.wb.get_sheet_by_name('Sheet1')
         self.rowNum = 1;
 
@@ -23,7 +23,7 @@ class Linker:
         return note;
 
     def save(self):
-        self.wb.save('formatedlinks.xlsx')
+        self.wb.save('linksupdated.xlsx')
 
     def length(self):
         self.startRow = self.rowNum;

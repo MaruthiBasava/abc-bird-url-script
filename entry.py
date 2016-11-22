@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from linker import Linker
 import re
+from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
 
@@ -16,13 +17,14 @@ def format_url():
 
 def format_title_to_url(result):
     a = result.text
-    b = remove_non_ascii(a)
-    c = re.sub('\s+', ' ', b).strip()
-    d = c.replace(" ", "-")
-    return d.replace(" ", "")
+    b = re.sub('-',' ', a).strip()
+    c = re.sub('\s+',' ', b).strip()
+    d = remove_non_ascii(c)
+    e = d.replace(" ","-")
+    return e
 
 
-def get_parsed_title(url):
+def get_title_from_wayback(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     result = soup.find('span', class_='H1')
@@ -36,14 +38,20 @@ def get_parsed_title(url):
 
 
 def remove_non_ascii(s):
+    s.lower()
     return "".join(i for i in s if (ord(i) == 32 or ord(i) >= 65 <= 90 or ord(i) >= 97 <= 122 or ord(i) >= 48 <= 57))
 
 
 def return_working_title(url):
-    try:
-        page = requests.get(url)
 
-        soup = BeautifulSoup(page.text, 'html.parser')
+    hdr = {'User-agent': 'Mozilla/5.0'}
+    req = Request(url, headers= hdr)
+
+    try:
+        page = urlopen(req).read
+        ppage = requests.get(url)
+
+        soup = BeautifulSoup(ppage.text, 'html.parser')
 
         if "404 " in soup.text:
             return "not in new site"
@@ -56,11 +64,11 @@ def return_working_title(url):
 def add_all_links(a,b):
     link.rowNum = a
     for i in range(a,b):
-        a = get_parsed_title(format_url())
+        a = get_title_from_wayback(format_url())
         current_link = return_working_title("https://abcbirds.org/" + a)
-        print(str(i) + " " + a + "  \n  " + "https://abcbirds.org/" + a)
+        print(str(i) + " " + current_link + "  \n  " + "https://abcbirds.org/" + a)
 
-        if a == 'no-wayback' or a is 'no-wayback':
+        if a in 'no-wayback':
             link.addNote("no-wayback-machine")
             print('WAYBACK')
         else:
@@ -69,7 +77,8 @@ def add_all_links(a,b):
     link.save()
 
 try:
-    add_all_links(0,link.length())
+    add_all_links(1,link.length())
+
 except:
     link.save()
     print("FAILED")
