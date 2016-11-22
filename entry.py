@@ -22,7 +22,7 @@ def format_title_to_url(result):
     return d.replace(" ", "")
 
 
-def get_parsed_title(url): #gets title and parses it
+def get_parsed_title(url): 
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     result = soup.find('span', class_='H1')
@@ -41,9 +41,9 @@ def remove_non_ascii(s):
 
 def return_working_title(url):
     try:
-        ppage = requests.get(url)
+        page = requests.get(url)
 
-        soup = BeautifulSoup(ppage.text, 'html.parser')
+        soup = BeautifulSoup(page.text, 'html.parser')
 
         if "404 " in soup.text:
             return "not in new site"
@@ -53,7 +53,7 @@ def return_working_title(url):
     return url
 
 
-def add_all_links(a,b): #will add the link or note to the sheet
+def add_all_links(a,b):
     link.rowNum = a
     for i in range(a,b):
         a = get_parsed_title(format_url())
