@@ -2,11 +2,11 @@ from bs4 import BeautifulSoup
 import requests
 from linker import Linker
 import re
-from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
 
 link = Linker()
+
 
 def format_url():
     base_url = "https://web.archive.org/web/"
@@ -14,59 +14,62 @@ def format_url():
     return base_url + date + link.getNextLink()
 
 
-def get_parsed_title(url):
+def format_title_to_url(result):
+    a = result.text
+    b = remove_non_ascii(a)
+    c = re.sub('\s+', ' ', b).strip()
+    d = c.replace(" ", "-")
+    return d.replace(" ", "")
+
+
+def get_parsed_title(url): #gets title and parses it
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     result = soup.find('span', class_='H1')
 
-    if result == None:
-        result = soup.find('h1', {"align":"center"})
-        if result == None:
-            return "no-search-results"
+    if result is None:
+        result = soup.find('h1', {"align": "center"})
+        if result is None:
+            return "no-wayback"
 
-    a = result.text
-    b = _removeNonAscii(a)
-    c = re.sub('\s+', ' ', b).strip()
-    d = c.replace(" ", "-")
-    return d
+    return format_title_to_url()
 
-def _removeNonAscii(s):
-    return "".join(i for i in s if ( ord(i) == 32 or ord(i) >= 65 and ord(i) <= 90 or ord(i) >= 97 and ord(i) <= 122))
 
-def return_working_title(url): #simply returns the title
-    hdr = {'User-agent': 'Mozilla/5.0'}
-    req = Request(url, headers=hdr)
+def remove_non_ascii(s):
+    return "".join(i for i in s if (ord(i) == 32 or ord(i) >= 65 <= 90 or ord(i) >= 97 <= 122 or ord(i) >= 48 <= 57))
 
+
+def return_working_title(url):
     try:
-        page = urlopen(req).read()
+        ppage = requests.get(url)
+
+        soup = BeautifulSoup(ppage.text, 'html.parser')
+
+        if "404 " in soup.text:
+            return "not in new site"
     except HTTPError:
-        return "404 NOT FOUND"
+        return "NOT ON NEW SITE"
 
     return url
 
-def add_all_links(length): #will add the link or note to the sheet
-    for i in range(length):
-        a = get_parsed_title(format_url())
-        current_link = return_working_title("https://abcbirds.org/" + a)
-        print(str(i) + " " + current_link + "  \n  " + "https://abcbirds.org/" + a)
 
-        link.addNote(current_link)
-
-    link.save()
-
-def add_all_links1(a,b): #will add the link or note to the sheet
+def add_all_links(a,b): #will add the link or note to the sheet
     link.rowNum = a
     for i in range(a,b):
         a = get_parsed_title(format_url())
         current_link = return_working_title("https://abcbirds.org/" + a)
-        print(str(i) + " " + current_link + "  \n  " + "https://abcbirds.org/" + a)
+        print(str(i) + " " + a + "  \n  " + "https://abcbirds.org/" + a)
 
-        link.addNote(current_link)
+        if a == 'no-wayback' or a is 'no-wayback':
+            link.addNote("no-wayback-machine")
+            print('WAYBACK')
+        else:
+            link.addNote(current_link)
 
     link.save()
 
 try:
-    add_all_links1(987,link.length())
+    add_all_links(987,link.length())
 except:
     link.save()
     print("FAILED")
