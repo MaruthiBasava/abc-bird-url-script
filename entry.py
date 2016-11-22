@@ -15,6 +15,9 @@ def format_url():
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9b0b6293516646d6bd30f3c5909afc14bc058bbd
 def format_title_to_url(result):
     a = result.text
     b = remove_non_ascii(a)
@@ -23,13 +26,17 @@ def format_title_to_url(result):
     return d.replace(" ", "")
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> da3113cc8541e9e0269ffb58c6332a9a3ed14994
+=======
+>>>>>>> 9b0b6293516646d6bd30f3c5909afc14bc058bbd
 def get_parsed_title(url): #gets title and parses it
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     result = soup.find('span', class_='H1')
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     if result is None:
         result = soup.find('h1', {"align": "center"})
@@ -67,6 +74,22 @@ def return_working_title(url):
         ppage = requests.get(url)
 =======
         page = urlopen(req).read
+=======
+    if result is None:
+        result = soup.find('h1', {"align": "center"})
+        if result is None:
+            return "no-wayback"
+
+    return format_title_to_url(result)
+
+
+def remove_non_ascii(s):
+    return "".join(i for i in s if (ord(i) == 32 or ord(i) >= 65 <= 90 or ord(i) >= 97 <= 122 or ord(i) >= 48 <= 57))
+
+
+def return_working_title(url):
+    try:
+>>>>>>> 9b0b6293516646d6bd30f3c5909afc14bc058bbd
         ppage = requests.get(url)
 
         soup = BeautifulSoup(ppage.text, 'html.parser')
@@ -85,6 +108,7 @@ def return_working_title(url):
     except HTTPError:
         return "NOT ON NEW SITE"
 
+<<<<<<< HEAD
     return url
 =======
 def add_all_links(length): #will add the link or note to the sheet
@@ -100,6 +124,8 @@ def add_all_links(length): #will add the link or note to the sheet
             link.addNote(current_link)
 >>>>>>> da3113cc8541e9e0269ffb58c6332a9a3ed14994
 
+=======
+>>>>>>> 9b0b6293516646d6bd30f3c5909afc14bc058bbd
 
 def add_all_links(a,b): #will add the link or note to the sheet
     link.rowNum = a
