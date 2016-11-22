@@ -32,7 +32,7 @@ def get_parsed_title(url): #gets title and parses it
         if result is None:
             return "no-wayback"
 
-    return format_title_to_url()
+    return format_title_to_url(result)
 
 
 def remove_non_ascii(s):
@@ -69,7 +69,7 @@ def add_all_links(a,b): #will add the link or note to the sheet
     link.save()
 
 try:
-    add_all_links(987,link.length())
+    add_all_links(0,link.length())
 except:
     link.save()
     print("FAILED")
