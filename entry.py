@@ -7,7 +7,7 @@ from urllib.error import HTTPError
 
 
 link = Linker()
-
+current_row = 0
 
 def format_url():
     base_url = "https://web.archive.org/web/"
@@ -39,13 +39,13 @@ def get_title_from_wayback(url):
 
 def remove_non_ascii(s):
     s.lower()
-    return "".join(i for i in s if (ord(i) == 32 or ord(i) >= 65 <= 90 or ord(i) >= 97 <= 122 or ord(i) >= 48 <= 57))
+    return "".join(i for i in s if (ord(i) == 32 or ord(i) >= 65 and ord(i) <= 90 or ord(i) >= 97 and ord(i) <= 122 or ord(i) >= 48 and ord(i)<= 57))
 
 
 def return_working_title(url):
 
     hdr = {'User-agent': 'Mozilla/5.0'}
-    req = Request(url, headers= hdr)
+    req = Request(url, headers=hdr)
 
     try:
         page = urlopen(req).read
@@ -81,5 +81,5 @@ try:
 
 except:
     link.save()
-    print("FAILED")
+    add_all_links(current_row + 1)
     raise
