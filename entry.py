@@ -22,7 +22,7 @@ def format_title_to_url(result):
     return d.replace(" ", "")
 
 
-def get_parsed_title(url): 
+def get_parsed_title(url):
     page = requests.get(url)
     soup = BeautifulSoup(page.text, 'html.parser')
     result = soup.find('span', class_='H1')
